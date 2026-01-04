@@ -1,35 +1,25 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { Resource } from 'ra-core';
 import './App.css'
+import { Admin } from "./components/admin"
+import { ProductCreate } from './products/createProduct';
+import { ProductList } from './products/products';
+import { ProductShow } from './products/showProduct';
+import { VariantCreate } from './products/createVariant';
+import { CategoryList } from './categories/categories';
+import { UserList } from './users/users';
+import { CharacteristicList } from './characteristics/characteristics';
+import { LeatherList } from './leathers/leathers';
 
-function App() {
-  const [count, setCount] = useState(0)
+export const App = () => {
+    return(
+        <Admin>
+            <Resource name='users' list={UserList} />
+            <Resource name='products' list={ProductList} create={ProductCreate} show={ProductShow} />
+            <Resource name='variants' create={VariantCreate} />
+            <Resource name='categories' list={CategoryList} />
+            <Resource name='characteristics' list={CharacteristicList} />
+            <Resource name='leathers' list={LeatherList} />
+        </Admin>
+    )
+};
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
-
-export default App
