@@ -2,7 +2,7 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbPage,
-} from "@/components/ui/breadcrumb";
+} from "@/components/admin/breadcrumb";
 import type { ShowBaseProps } from "ra-core";
 import {
   ShowBase,
@@ -153,7 +153,7 @@ export const ShowView = ({
           {hasDashboard && (
             <BreadcrumbItem>
               <Link to="/">
-                <Translate i18nKey="ra.page.dashboard">Home</Translate>
+                <Translate i18nKey="ra.page.dashboard">Inicio</Translate>
               </Link>
             </BreadcrumbItem>
           )}

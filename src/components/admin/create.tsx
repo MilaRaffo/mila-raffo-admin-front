@@ -2,7 +2,7 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbPage,
-} from "@/components/ui/breadcrumb";
+} from "@/components/admin/breadcrumb";
 import type { CreateBaseProps } from "ra-core";
 import {
   CreateBase,
@@ -103,7 +103,7 @@ export const CreateView = ({
           {hasDashboard && (
             <BreadcrumbItem>
               <Link to="/">
-                <Translate i18nKey="ra.page.dashboard">Home</Translate>
+                <Translate i18nKey="ra.page.dashboard">Inicio</Translate>
               </Link>
             </BreadcrumbItem>
           )}
@@ -111,7 +111,7 @@ export const CreateView = ({
             <Link to={listLink}>{listLabel}</Link>
           </BreadcrumbItem>
           <BreadcrumbPage>
-            <Translate i18nKey="ra.action.create">Create</Translate>
+            <Translate i18nKey="ra.action.create">Crear</Translate>
           </BreadcrumbPage>
         </Breadcrumb>
       )}

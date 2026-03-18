@@ -61,31 +61,34 @@ export const Breadcrumb = ({ children, ref }: BreadcrumbProps) => {
   const [open, setOpen] = React.useState(false);
   if (!breadcrumbPortal) return null;
   return createPortal(
-    <>
+    <div className="flex w-full min-w-0 items-center overflow-hidden">
       <Separator
         decorative
         orientation="vertical"
-        className="data-[orientation=vertical]:h-4 mr-4"
+        className="mr-3 data-[orientation=vertical]:h-5"
       />
-      <BaseBreadcrumb ref={ref}>
-        <BreadcrumbList>
+      <BaseBreadcrumb ref={ref} className="w-full min-w-0">
+        <BreadcrumbList className="w-full min-w-0">
           {isMobile && React.Children.count(children) > 2 ? (
             <React.Fragment>
               <BreadcrumbItem>
                 <Drawer open={open} onOpenChange={setOpen}>
-                  <DrawerTrigger aria-label="Toggle Menu">
+                  <DrawerTrigger
+                    aria-label="Abrir navegación"
+                    className="rounded-sm p-1 transition-colors hover:bg-accent/60"
+                  >
                     <BreadcrumbEllipsis className="h-4 w-4" />
                   </DrawerTrigger>
                   <DrawerContent>
                     <DrawerHeader className="text-left">
                       <DrawerTitle>
                         <Translate i18nKey="ra.navigation.breadcrumb_drawer_title">
-                          Navigate to
+                          Ir a
                         </Translate>
                       </DrawerTitle>
                       <DrawerDescription>
                         <Translate i18nKey="ra.navigation.breadcrumb_drawer_instructions">
-                          Select a page to navigate to.
+                          Selecciona una página.
                         </Translate>
                       </DrawerDescription>
                     </DrawerHeader>
@@ -97,7 +100,7 @@ export const Breadcrumb = ({ children, ref }: BreadcrumbProps) => {
                     <DrawerFooter className="pt-4">
                       <DrawerClose asChild>
                         <Button variant="outline">
-                          <Translate i18nKey="ra.action.close">Close</Translate>
+                          <Translate i18nKey="ra.action.close">Cerrar</Translate>
                         </Button>
                       </DrawerClose>
                     </DrawerFooter>
@@ -123,7 +126,7 @@ export const Breadcrumb = ({ children, ref }: BreadcrumbProps) => {
           )}
         </BreadcrumbList>
       </BaseBreadcrumb>
-    </>,
+    </div>,
     breadcrumbPortal,
   );
 };

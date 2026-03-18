@@ -1,14 +1,14 @@
 import {
-  BooleanInput,
-  Create,
-  SimpleForm,
-  TextInput,
-  ReferenceInput,
-  AutocompleteInput,
-  ReferenceArrayInput,
-  NumberInput,
   ArrayInput,
+  AutocompleteInput,
+  BooleanInput,
+  Edit,
+  NumberInput,
+  ReferenceArrayInput,
+  ReferenceInput,
+  SimpleForm,
   SimpleFormIterator,
+  TextInput,
 } from "@/components/admin";
 import { ProductCharacteristicValueInput } from "@/products/ProductCharacteristicValueInput";
 import { validators } from "@/lib/validators";
@@ -21,9 +21,10 @@ const transformProductPayload = (data: any) => ({
   })),
 });
 
-export const ProductCreate = () => (
-  <Create title="Crear producto" transform={transformProductPayload}>
+export const ProductEdit = () => (
+  <Edit title="Editar producto" transform={transformProductPayload}>
     <SimpleForm>
+      <TextInput source="id" disabled />
       <TextInput source="name" label="Nombre" validate={validators.productName} />
       <TextInput source="description" multiline rows={4} label="Descripción" validate={validators.productDescription} />
       <ReferenceArrayInput source="categoryIds" reference="categories">
@@ -31,7 +32,6 @@ export const ProductCreate = () => (
       </ReferenceArrayInput>
       <NumberInput source="basePrice" label="Precio base" step={0.01} min={0} validate={validators.price} />
       <BooleanInput source="available" label="Disponible" />
-
       <ArrayInput source="characteristics" label="Características">
         <SimpleFormIterator inline>
           <ReferenceInput source="characteristicId" reference="characteristics" label="Característica">
@@ -41,5 +41,5 @@ export const ProductCreate = () => (
         </SimpleFormIterator>
       </ArrayInput>
     </SimpleForm>
-  </Create>
+  </Edit>
 );

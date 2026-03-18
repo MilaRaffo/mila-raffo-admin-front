@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -46,37 +47,37 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --background: oklch(0.986 0.008 82.41);
+  --foreground: oklch(0.28 0.02 50.45);
+  --card: oklch(1 0.002 80);
+  --card-foreground: oklch(0.28 0.02 50.45);
+  --popover: oklch(1 0.002 80);
+  --popover-foreground: oklch(0.28 0.02 50.45);
+  --primary: oklch(0.45 0.08 43.12);
+  --primary-foreground: oklch(0.98 0.004 80);
+  --secondary: oklch(0.94 0.01 75);
+  --secondary-foreground: oklch(0.33 0.025 45);
+  --muted: oklch(0.95 0.008 78);
+  --muted-foreground: oklch(0.52 0.02 52);
+  --accent: oklch(0.89 0.03 66);
+  --accent-foreground: oklch(0.31 0.02 49);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: oklch(0.88 0.015 70);
+  --input: oklch(0.9 0.014 70);
+  --ring: oklch(0.53 0.07 43.12);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: oklch(0.955 0.015 70);
+  --sidebar-foreground: oklch(0.3 0.025 48);
+  --sidebar-primary: oklch(0.43 0.08 44);
+  --sidebar-primary-foreground: oklch(0.99 0.004 80);
+  --sidebar-accent: oklch(0.9 0.02 68);
+  --sidebar-accent-foreground: oklch(0.28 0.02 50);
+  --sidebar-border: oklch(0.86 0.015 68);
+  --sidebar-ring: oklch(0.53 0.07 43.12);
 }
 
 .dark {
@@ -119,5 +120,10 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "Manrope", ui-sans-serif, system-ui, sans-serif;
+    background-image:
+      radial-gradient(circle at 18% 12%, color-mix(in oklch, var(--accent), transparent 55%) 0, transparent 36%),
+      radial-gradient(circle at 82% 8%, color-mix(in oklch, var(--primary), transparent 82%) 0, transparent 28%);
+    background-attachment: fixed;
   }
 }

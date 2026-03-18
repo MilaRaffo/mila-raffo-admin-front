@@ -85,7 +85,7 @@ export const AutocompleteArrayInput = (
   } = useChoicesContext(props);
   const { id, field, isRequired } = useInput({ ...props, source });
   const translate = useTranslate();
-  const { placeholder = translate("ra.action.search", { _: "Search..." }) } =
+  const { placeholder = translate("ra.action.search", { _: "Buscar..." }) } =
     props;
 
   const getRecordRepresentation = useGetRecordRepresentation(resource);
@@ -183,7 +183,7 @@ export const AutocompleteArrayInput = (
                   >
                     <span className="sr-only">
                       {translate("ra.action.remove", {
-                        _: "Remove",
+                        _: "Quitar",
                       })}
                     </span>
                     <X className="h-3 w-3" />

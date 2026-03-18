@@ -78,7 +78,7 @@ export const AuthError = (props: AuthErrorProps) => {
       <p className="my-5">{translate(message, { _: message })}</p>
       <Button asChild>
         <Link to="/login">
-          <LockIcon /> {translate("ra.auth.sign_in", { _: "Sign in" })}
+          <LockIcon /> {translate("ra.auth.sign_in", { _: "Iniciar sesión" })}
         </Link>
       </Button>
     </div>

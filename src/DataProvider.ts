@@ -1,5 +1,320 @@
-import jsonServerProvider from 'ra-data-json-server';
+import type { DataProvider, GetListParams, GetManyReferenceParams, RaRecord } from "ra-core";
+import { apiRequest } from "@/lib/http-client";
+import type { PaginatedResponse } from "@/types/api";
 
-export const dataProvider = jsonServerProvider(
-    import.meta.env.VITE_MILA_RAFFO_STORE_API
-);
+const toQueryString = (params: Record<string, string | number | undefined>) => {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== "") {
+            searchParams.set(key, String(value));
+        }
+    });
+    const query = searchParams.toString();
+    return query ? `?${query}` : "";
+};
+
+const resourcePath: Record<string, string> = {
+    products: "/products",
+    categories: "/categories",
+    characteristics: "/characteristics",
+    leathers: "/leathers",
+    variants: "/variants",
+    images: "/images",
+    users: "/users",
+    orders: "/orders",
+    roles: "/roles",
+};
+
+const normalizeRecord = <T extends RaRecord>(resource: string, record: T): T => {
+    if (resource === "products") {
+        const product = record as T & {
+            categories?: Array<{ id: string }>;
+            characteristics?: Array<{ id?: string; characteristicId?: string; value: string }>;
+        };
+        return {
+            ...product,
+            categoryIds: (product.categories ?? []).map((category) => category.id),
+            characteristics:
+                product.characteristics?.map((item) => ({
+                    ...item,
+                    characteristicId: item.characteristicId ?? item.id,
+                    value: item.value,
+                })) ?? [],
+        } as T;
+    }
+
+    if (resource === "categories") {
+        const category = record as T & { parent?: { id: string } | null };
+        return {
+            ...category,
+            parentId: category.parent?.id,
+        } as T;
+    }
+
+    if (resource === "variants") {
+        const variant = record as T & {
+            product?: { id: string } | null;
+            leathers?: Array<{ id: string }>;
+        };
+        return {
+            ...variant,
+            productId: variant.product?.id,
+            leatherIds: (variant.leathers ?? []).map((leather) => leather.id),
+        } as T;
+    }
+
+    if (resource === "images") {
+        const image = record as T & {
+            variant?: { id: string } | null;
+        };
+
+        return {
+            ...image,
+            variantId: image.variant?.id,
+        } as T;
+    }
+
+    return record;
+};
+
+const mapPaginationParams = (params: GetListParams | GetManyReferenceParams) => {
+    const page = params.pagination?.page ?? 1;
+    const perPage = params.pagination?.perPage ?? 10;
+    const offset = (page - 1) * perPage;
+
+    return {
+        limit: perPage,
+        offset,
+    };
+};
+
+const mapSortParams = (params: GetListParams | GetManyReferenceParams) => {
+    if (!params.sort) {
+        return {};
+    }
+
+    return {
+        sortBy: params.sort.field,
+        sortOrder: params.sort.order,
+    };
+};
+
+const mapFilterParams = (params: GetListParams | GetManyReferenceParams) => {
+    if (!params.filter) {
+        return {};
+    }
+
+    const mapped: Record<string, string> = {};
+
+    Object.entries(params.filter).forEach(([key, value]) => {
+        if (value === undefined || value === null || value === "") return;
+        mapped[key] = String(value);
+    });
+
+    return mapped;
+};
+
+const getResourcePath = (resource: string) => {
+    const path = resourcePath[resource];
+    if (!path) {
+        throw new Error(`Resource no soportado: ${resource}`);
+    }
+    return path;
+};
+
+const sanitizePayload = (resource: string, data: any) => {
+    if (resource !== "products") return data;
+
+    const characteristics = Array.isArray(data.characteristics)
+        ? data.characteristics
+            .filter((item: any) => item?.characteristicId)
+            .map((item: any) => ({
+                characteristicId: item.characteristicId,
+                value: String(item.value ?? ""),
+            }))
+        : undefined;
+
+    return {
+        ...data,
+        characteristics,
+    };
+};
+
+export const dataProvider: DataProvider = {
+    async getList(resource, params) {
+        const basePath = getResourcePath(resource);
+        const query = toQueryString({
+            ...mapPaginationParams(params),
+            ...mapSortParams(params),
+            ...mapFilterParams(params),
+        });
+
+        const response = await apiRequest<PaginatedResponse<RaRecord>>(
+            `${basePath}${query}`,
+            {
+                method: "GET",
+            },
+        );
+
+        return {
+            data: response.data.map((record) => normalizeRecord(resource, record)),
+            total: response.pagination.total,
+            pageInfo: {
+                hasNextPage:
+                    response.pagination.offset + response.pagination.limit <
+                    response.pagination.total,
+                hasPreviousPage: response.pagination.offset > 0,
+            },
+        } as any;
+    },
+
+    async getOne(resource, params) {
+        const basePath = getResourcePath(resource);
+        const record = await apiRequest<RaRecord>(`${basePath}/${params.id}`, {
+            method: "GET",
+        });
+
+        return {
+            data: normalizeRecord(resource, record),
+        } as any;
+    },
+
+    async getMany(resource, params) {
+        const records = await Promise.all(
+            params.ids.map(async (id) => {
+                const record = await this.getOne(resource, { id });
+                return record.data;
+            }),
+        );
+
+        return { data: records } as any;
+    },
+
+    async getManyReference(resource, params: GetManyReferenceParams) {
+        const basePath = getResourcePath(resource);
+
+        if (resource === "variants" && params.target === "productId") {
+            const query = toQueryString({
+                ...mapPaginationParams(params),
+            });
+            const response = await apiRequest<PaginatedResponse<RaRecord>>(
+                `/products/${params.id}/variants${query}`,
+                { method: "GET" },
+            );
+
+            return {
+                data: response.data.map((record) =>
+                    normalizeRecord(resource, { ...record, productId: params.id }),
+                ),
+                total: response.pagination.total,
+            } as any;
+        }
+
+        const query = toQueryString({
+            ...mapPaginationParams(params),
+            ...mapSortParams(params),
+            ...mapFilterParams(params),
+            [params.target]: String(params.id),
+        });
+
+        const response = await apiRequest<PaginatedResponse<RaRecord>>(
+            `${basePath}${query}`,
+            { method: "GET" },
+        );
+
+        return {
+            data: response.data.map((record) => normalizeRecord(resource, record)),
+            total: response.pagination.total,
+        } as any;
+    },
+
+    async create(resource, params) {
+        const basePath = getResourcePath(resource);
+
+        if (resource === "images") {
+            const imageData = params.data as {
+                file?: { rawFile?: File };
+                alt?: string;
+                variantId?: string;
+                url?: string;
+            };
+
+            if (imageData.file?.rawFile instanceof File) {
+                const formData = new FormData();
+                formData.append("file", imageData.file.rawFile);
+                if (imageData.alt) {
+                    formData.append("alt", imageData.alt);
+                }
+                if (imageData.variantId) {
+                    formData.append("variantId", imageData.variantId);
+                }
+
+                const uploaded = await apiRequest<RaRecord>("/images/upload", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                return {
+                    data: normalizeRecord(resource, uploaded),
+                } as any;
+            }
+        }
+
+        const record = await apiRequest<RaRecord>(basePath, {
+            method: "POST",
+            body: JSON.stringify(sanitizePayload(resource, params.data)),
+        });
+
+        return {
+            data: normalizeRecord(resource, record),
+        } as any;
+    },
+
+    async update(resource, params) {
+        const basePath = getResourcePath(resource);
+        const record = await apiRequest<RaRecord>(`${basePath}/${params.id}`, {
+            method: "PATCH",
+            body: JSON.stringify(sanitizePayload(resource, params.data)),
+        });
+
+        return {
+            data: normalizeRecord(resource, record),
+        } as any;
+    },
+
+    async updateMany(resource, params) {
+        const basePath = getResourcePath(resource);
+        const result = await Promise.all(params.ids.map(async (id) => {
+            await apiRequest(`${basePath}/${id}`, {
+                method: "PATCH",
+                body: JSON.stringify(sanitizePayload(resource, params.data)),
+            });
+            return id;
+        }));
+
+        return { data: result } as any;
+    },
+
+    async delete(resource, params) {
+        const basePath = getResourcePath(resource);
+        await apiRequest<void>(`${basePath}/${params.id}`, {
+            method: "DELETE",
+        });
+
+        return {
+            data: { id: params.id } as RaRecord,
+        } as any;
+    },
+
+    async deleteMany(resource, params) {
+        const basePath = getResourcePath(resource);
+        const result = await Promise.all(params.ids.map(async (id) => {
+            await apiRequest(`${basePath}/${id}`, {
+                method: "DELETE",
+            });
+            return id;
+        }));
+
+        return { data: result } as any;
+    },
+};

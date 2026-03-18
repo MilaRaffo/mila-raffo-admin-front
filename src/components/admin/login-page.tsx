@@ -52,8 +52,10 @@ export const LoginPage = (props: { redirectTo?: string }) => {
   return (
     <div className="min-h-screen flex">
       <div className="container relative grid flex-col items-center justify-center sm:max-w-none lg:grid-cols-2 lg:px-0">
-        <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
-          <div className="absolute inset-0 bg-zinc-900" />
+        <div className="relative hidden h-full flex-col p-10 text-white dark:border-r lg:flex overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-[#2b1c12] via-[#3b2719] to-[#6f4b2c]" />
+          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-amber-200/15 blur-3xl" />
+          <div className="absolute -left-24 bottom-2 h-64 w-64 rounded-full bg-orange-200/15 blur-3xl" />
           <div className="relative z-20 flex items-center text-lg font-medium">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -67,36 +69,31 @@ export const LoginPage = (props: { redirectTo?: string }) => {
             >
               <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
             </svg>
-            Acme Inc
+            Mila Raffo 
           </div>
           <div className="relative z-20 mt-auto">
             <blockquote className="space-y-2">
-              <p className="text-lg">
-                &ldquo;Shadcn Admin Kit has allowed us to quickly create and
-                evolve a powerful tool that otherwise would have taken months of
-                time and effort to develop.&rdquo;
-              </p>
-              <footer className="text-sm">John Doe</footer>
+              <footer className="text-sm">Panel Administrativo</footer>
             </blockquote>
           </div>
         </div>
         <div className="lg:p-8">
-          <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+          <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[390px] rounded-2xl border bg-card/90 p-8 shadow-lg backdrop-blur">
             <div className="flex flex-col space-y-2 text-center">
-              <h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
+              <h1 className="text-2xl font-semibold tracking-tight">Iniciar sesión</h1>
               <p className="text-sm leading-none text-muted-foreground">
-                Try janedoe@acme.com / password
+                Accede con tu cuenta de administrador
               </p>
             </div>
             <Form className="space-y-8" onSubmit={handleSubmit}>
               <TextInput
-                label="Email"
+                label="Correo"
                 source="email"
                 type="email"
                 validate={required()}
               />
               <TextInput
-                label="Password"
+                label="Contraseña"
                 source="password"
                 type="password"
                 validate={required()}
@@ -106,7 +103,7 @@ export const LoginPage = (props: { redirectTo?: string }) => {
                 className="cursor-pointer"
                 disabled={loading}
               >
-                Sign in
+                Entrar al panel
               </Button>
             </Form>
           </div>

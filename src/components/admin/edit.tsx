@@ -16,7 +16,7 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbPage,
-} from "@/components/ui/breadcrumb";
+} from "@/components/admin/breadcrumb";
 import { cn } from "@/lib/utils";
 import { ShowButton } from "@/components/admin/show-button";
 import { DeleteButton } from "./delete-button";
@@ -120,14 +120,19 @@ export const EditView = ({
           {hasDashboard && (
             <BreadcrumbItem>
               <Link to="/">
-                <Translate i18nKey="ra.page.dashboard">Home</Translate>
+                <Translate i18nKey="ra.page.dashboard">Inicio</Translate>
               </Link>
             </BreadcrumbItem>
           )}
           <BreadcrumbItem>
             <Link to={listLink}>{listLabel}</Link>
           </BreadcrumbItem>
-          <BreadcrumbPage>{recordRepresentation}</BreadcrumbPage>
+          <BreadcrumbItem>
+            <BreadcrumbPage>{recordRepresentation}</BreadcrumbPage>
+          </BreadcrumbItem>
+          <BreadcrumbPage>
+            <Translate i18nKey="ra.action.edit">Editar</Translate>
+          </BreadcrumbPage>
         </Breadcrumb>
       )}
       <div

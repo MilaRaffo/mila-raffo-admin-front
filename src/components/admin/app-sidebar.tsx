@@ -98,7 +98,7 @@ export function AppSidebar() {
 export const DashboardMenuItem = ({ onClick }: { onClick?: () => void }) => {
   const translate = useTranslate();
   const label = translate("ra.page.dashboard", {
-    _: "Dashboard",
+    _: "Inicio",
   });
   const match = useMatch({ path: "/", end: true });
   return (
