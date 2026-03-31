@@ -1,4 +1,5 @@
 import {
+    BooleanBadgeField,
     Create,
     DataTable,
     Edit,
@@ -7,6 +8,7 @@ import {
     ReferenceInput,
     Show,
     ShowButton,
+    ShortIdField,
     SimpleForm,
     TextField,
     TextInput,
@@ -19,12 +21,16 @@ import { CanAccess, useCurrentRole } from "@/security/access";
 export const UserList = () => (
     <List title="Usuarios">
         <DataTable>
-            <DataTable.Col source="id" />
+            <DataTable.Col source="id" label="ID">
+                <ShortIdField source="id" />
+            </DataTable.Col>
             <DataTable.Col source="name" />
             <DataTable.Col source="lastName" />
             <DataTable.Col source="email" />
             <DataTable.Col source="role" />
-            <DataTable.Col source="isActive" />
+            <DataTable.Col source="isActive" label="Activo">
+                <BooleanBadgeField source="isActive" trueLabel="Sí" falseLabel="No" />
+            </DataTable.Col>
             <DataTable.Col label="Ver">
                 <ShowButton />
             </DataTable.Col>
@@ -106,7 +112,7 @@ export const UserShow = () => (
                     </div>
                     <div>
                         <div className="text-xs text-muted-foreground">Estado</div>
-                        <TextField source="isActive" />
+                        <BooleanBadgeField source="isActive" trueLabel="Activo" falseLabel="Inactivo" />
                     </div>
                 </div>
             </div>

@@ -1,13 +1,18 @@
 import {
+    AutocompleteInput,
+    BooleanBadgeField,
     DataTable,
     EditButton,
     List,
+    NumberInput,
     NumberField,
+    ReferenceInput,
     SearchInput,
+    SelectInput,
+    ShortIdField,
     ShowButton,
     TextField,
 } from "@/components/admin";
-import { Badge } from "@/components/ui/badge";
 import { useRecordContext } from "ra-core";
 
 const ProductImageThumb = () => {
@@ -25,16 +30,25 @@ const ProductImageThumb = () => {
 };
 
 const AvailabilityBadge = () => {
-    const record = useRecordContext();
-    if (!record) return null;
-    return (
-        <Badge variant="outline">
-            {record.available ? "Disponible" : "No disponible"}
-        </Badge>
-    );
+    return <BooleanBadgeField source="available" trueLabel="Disponible" falseLabel="No disponible" />;
 };
 
-const productFilters = [<SearchInput source="name" alwaysOn />];
+const productFilters = [
+    <SearchInput source="name" alwaysOn />,
+    <SelectInput
+        source="available"
+        label="Disponibilidad"
+        choices={[
+            { id: "true", name: "Disponible" },
+            { id: "false", name: "No disponible" },
+        ]}
+    />,
+    <ReferenceInput source="categoryId" reference="categories" label="Categoría">
+        <AutocompleteInput optionText="name" />
+    </ReferenceInput>,
+    <NumberInput source="minBasePrice" label="Precio min" min={0} step={0.01} />,
+    <NumberInput source="maxBasePrice" label="Precio max" min={0} step={0.01} />,
+];
 
 export const ProductList = () => (
     <List title="Productos" filters={productFilters}>
@@ -42,7 +56,9 @@ export const ProductList = () => (
             <DataTable.Col source="image.url" label="Imagen">
                 <ProductImageThumb />
             </DataTable.Col>
-            <DataTable.Col source="id" />
+            <DataTable.Col source="id" label="ID">
+                <ShortIdField source="id" />
+            </DataTable.Col>
             <DataTable.Col source="name">
                 <TextField source="name" />
             </DataTable.Col>

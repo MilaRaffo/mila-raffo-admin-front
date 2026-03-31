@@ -1,12 +1,17 @@
 import {
+  AutocompleteArrayInput,
   Create,
+  BooleanBadgeField,
   DataTable,
   Edit,
   EditButton,
+  FileField,
+  FileInput,
   List,
   NumberInput,
   ReferenceArrayInput,
   ReferenceInput,
+  ShortIdField,
   Show,
   ShowButton,
   SimpleForm,
@@ -22,18 +27,29 @@ import { useRecordContext } from "ra-core";
 import { useLocation } from "react-router";
 
 const AvailabilityBadge = () => {
-  const record = useRecordContext();
-  if (!record) return null;
   return (
-    <Badge
-      className={
-        record.isAvailable
-          ? "border-emerald-200 bg-emerald-100 text-emerald-800"
-          : "border-rose-200 bg-rose-100 text-rose-800"
-      }
-    >
-      {record.isAvailable ? "Disponible" : "No disponible"}
-    </Badge>
+    <BooleanBadgeField
+      source="isAvailable"
+      trueLabel="Disponible"
+      falseLabel="No disponible"
+    />
+  );
+};
+
+const VariantImageThumb = () => {
+  const record = useRecordContext<{ images?: Array<{ url?: string; alt?: string }> }>();
+  const firstImage = record?.images?.[0];
+
+  if (!firstImage?.url) {
+    return <span className="text-xs text-muted-foreground">Sin imagen</span>;
+  }
+
+  return (
+    <img
+      src={firstImage.url}
+      alt={firstImage.alt ?? "Imagen de variante"}
+      className="h-12 w-12 rounded-md object-cover border"
+    />
   );
 };
 
@@ -59,6 +75,28 @@ const VariantImages = () => {
   );
 };
 
+const VariantEditImages = () => {
+  const record = useRecordContext<{ images?: Array<{ url?: string; alt?: string }> }>();
+  const images = record?.images ?? [];
+
+  if (images.length === 0) {
+    return <p className="text-sm text-muted-foreground">No hay imágenes cargadas todavía.</p>;
+  }
+
+  return (
+    <div className="grid grid-cols-3 gap-2 md:grid-cols-5">
+      {images.map((image, index) => (
+        <img
+          key={`${image.url ?? "variant-image"}-${index}`}
+          src={image.url}
+          alt={image.alt ?? `Imagen ${index + 1}`}
+          className="h-16 w-16 rounded-md border object-cover"
+        />
+      ))}
+    </div>
+  );
+};
+
 const VariantLeathers = () => {
   const record = useRecordContext<{ leathers?: Array<{ id: string; name?: string; code?: string; color?: string }> }>();
   const leathers = (record?.leathers ?? []).filter((leather) => leather.id);
@@ -68,7 +106,7 @@ const VariantLeathers = () => {
   }
 
   return (
-    <DataTable data={leathers} bulkActionButtons={false}>
+    <DataTable data={leathers} bulkActionButtons={false} rowClick={false}>
       <DataTable.Col source="name" label="Nombre" />
       <DataTable.Col source="code" label="Código" />
       <DataTable.Col source="color" label="Color" />
@@ -79,7 +117,12 @@ const VariantLeathers = () => {
 export const VariantList = () => (
   <List title="Variantes">
     <DataTable rowClick="show">
-      <DataTable.Col source="id" />
+      <DataTable.Col source="images" label="Imagen">
+        <VariantImageThumb />
+      </DataTable.Col>
+      <DataTable.Col source="id" label="ID">
+        <ShortIdField source="id" />
+      </DataTable.Col>
       <DataTable.Col source="sku" />
       <DataTable.Col source="price">
         <NumberField source="price" />
@@ -127,8 +170,17 @@ const VariantCreateForm = () => {
         <TextInput source="sku" validate={validators.sku} />
         <NumberInput source="price" min={0} step={0.01} validate={validators.price} />
         <BooleanInput source="isAvailable" />
+        <FileInput
+          source="imageFiles"
+          label="Imágenes"
+          accept={{ "image/*": [] }}
+          multiple
+          helperText="Puedes subir una o más imágenes para la variante"
+        >
+          <FileField source="src" title="title" />
+        </FileInput>
         <ReferenceArrayInput source="leatherIds" reference="leathers" label="Cueros">
-          <AutocompleteInput optionText="name" />
+          <AutocompleteArrayInput optionText="name" />
         </ReferenceArrayInput>
       </SimpleForm>
     </Create>
@@ -142,8 +194,21 @@ export const VariantEdit = () => (
       <TextInput source="sku" validate={validators.sku} />
       <NumberInput source="price" min={0} step={0.01} validate={validators.price} />
       <BooleanInput source="isAvailable" />
+      <div className="space-y-2">
+        <div className="text-sm font-medium text-muted-foreground">Imágenes actuales</div>
+        <VariantEditImages />
+      </div>
+      <FileInput
+        source="imageFiles"
+        label="Agregar nuevas imágenes"
+        accept={{ "image/*": [] }}
+        multiple
+        helperText="Las imágenes seleccionadas se agregarán a la variante al guardar"
+      >
+        <FileField source="src" title="title" />
+      </FileInput>
       <ReferenceArrayInput source="leatherIds" reference="leathers" label="Cueros">
-        <AutocompleteInput optionText="name" />
+        <AutocompleteArrayInput optionText="name" />
       </ReferenceArrayInput>
     </SimpleForm>
   </Edit>

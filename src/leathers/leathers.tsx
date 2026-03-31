@@ -1,5 +1,6 @@
 import {
     BooleanInput,
+    BooleanBadgeField,
     Create,
     DataTable,
     Edit,
@@ -8,6 +9,7 @@ import {
     ReferenceInput,
     Show,
     ShowButton,
+    ShortIdField,
     SimpleForm,
     TextField,
     TextInput,
@@ -50,11 +52,15 @@ export const LeatherList = () => (
             <DataTable.Col source="image.url" label="Imagen">
                 <LeatherImageThumb />
             </DataTable.Col>
-            <DataTable.Col source="id" />
+            <DataTable.Col source="id" label="ID">
+                <ShortIdField source="id" />
+            </DataTable.Col>
             <DataTable.Col source="name" />
             <DataTable.Col source="code" />
             <DataTable.Col source="color" />
-            <DataTable.Col source="isActive" />
+            <DataTable.Col source="isActive" label="Activo">
+                <BooleanBadgeField source="isActive" trueLabel="Sí" falseLabel="No" />
+            </DataTable.Col>
             <DataTable.Col label="Ver">
                 <ShowButton />
             </DataTable.Col>
@@ -122,7 +128,7 @@ export const LeatherShow = () => (
                     </div>
                     <div>
                         <div className="text-xs text-muted-foreground">Activo</div>
-                        <TextField source="isActive" />
+                        <BooleanBadgeField source="isActive" trueLabel="Sí" falseLabel="No" />
                     </div>
                 </div>
             </div>

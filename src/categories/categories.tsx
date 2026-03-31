@@ -1,5 +1,6 @@
 import {
     BooleanInput,
+    BooleanBadgeField,
     DataTable,
     Edit,
     EditButton,
@@ -7,6 +8,7 @@ import {
     ReferenceInput,
     Show,
     ShowButton,
+    ShortIdField,
     SimpleForm,
     TextField,
     TextInput,
@@ -15,6 +17,21 @@ import {
 } from "@/components/admin";
 import { validators } from "@/lib/validators";
 import { useRecordContext } from "ra-core";
+import { Link } from "react-router";
+
+const CategoryChildLink = () => {
+    const record = useRecordContext<{ id?: string; name?: string }>();
+
+    if (!record?.id) {
+        return <span>{record?.name ?? "-"}</span>;
+    }
+
+    return (
+        <Link to={`/categories/${record.id}/show`} className="text-primary hover:underline">
+            {record.name}
+        </Link>
+    );
+};
 
 const CategoryChildrenPanel = () => {
     const record = useRecordContext<{
@@ -35,9 +52,13 @@ const CategoryChildrenPanel = () => {
 
     return (
         <DataTable data={children} bulkActionButtons={false} rowClick={false}>
-            <DataTable.Col source="name" label="Nombre" />
+            <DataTable.Col source="name" label="Nombre">
+                <CategoryChildLink />
+            </DataTable.Col>
             <DataTable.Col source="slug" label="Slug" />
-            <DataTable.Col source="active" label="Activa" />
+            <DataTable.Col source="active" label="Activa">
+                <BooleanBadgeField source="active" trueLabel="Sí" falseLabel="No" />
+            </DataTable.Col>
         </DataTable>
     );
 };
@@ -45,11 +66,15 @@ const CategoryChildrenPanel = () => {
 export const CategoryList = () => (
     <List title="Categorías">
         <DataTable>
-            <DataTable.Col source="id" />
+            <DataTable.Col source="id" label="ID">
+                <ShortIdField source="id" />
+            </DataTable.Col>
             <DataTable.Col source="name" />
             <DataTable.Col source="slug" />
             <DataTable.Col source="parent.name" label="Categoría padre" />
-            <DataTable.Col source="active" />
+            <DataTable.Col source="active" label="Activa">
+                <BooleanBadgeField source="active" trueLabel="Sí" falseLabel="No" />
+            </DataTable.Col>
             <DataTable.Col label="Ver">
                 <ShowButton />
             </DataTable.Col>
@@ -113,7 +138,7 @@ export const CategoryShow = () => (
                     </div>
                     <div>
                         <div className="text-xs text-muted-foreground">Activa</div>
-                        <TextField source="active" />
+                        <BooleanBadgeField source="active" trueLabel="Sí" falseLabel="No" />
                     </div>
                 </div>
             </div>

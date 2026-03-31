@@ -1,9 +1,7 @@
 import {
-  BadgeField,
+  BooleanBadgeField,
   DataTable,
-  ReferenceArrayField,
   Show,
-  SingleFieldList,
   TextField,
 } from "@/components/admin";
 import { Badge } from "@/components/ui/badge";
@@ -80,6 +78,9 @@ const VariantsPanel = () => {
         bulkActionButtons={false}
         rowClick="show"
       >
+        <DataTable.Col source="image.url" label="Imagen">
+          <VariantImageThumb />
+        </DataTable.Col>
         <DataTable.Col source="sku" label="SKU" />
         <DataTable.Col source="price" label="Precio" />
         <DataTable.Col source="isAvailable" label="Disponibilidad">
@@ -97,13 +98,97 @@ const CharacteristicsPanel = () => {
   return (
     <div className="w-full">
       <h3 className="text-lg font-semibold mb-2">Características</h3>
-      <DataTable data={record.characteristics ?? []} bulkActionButtons={false}>
-        <DataTable.Col source="name" label="Nombre" />
+      <DataTable data={record.characteristics ?? []} bulkActionButtons={false} rowClick={false}>
+        <DataTable.Col source="name" label="Nombre">
+          <CharacteristicLink />
+        </DataTable.Col>
         <DataTable.Col source="dataType" label="Tipo" />
         <DataTable.Col source="units" label="Unidad" />
-        <DataTable.Col source="value" label="Valor" />
+        <DataTable.Col source="value" label="Valor">
+          <CharacteristicValueField />
+        </DataTable.Col>
       </DataTable>
     </div>
+  );
+};
+
+const CharacteristicValueField = () => {
+  const record = useRecordContext<{ dataType?: string; value?: unknown }>();
+  const dataType = String(record?.dataType ?? "").toLowerCase().trim();
+  const isBooleanType = dataType.includes("bool");
+
+  if (isBooleanType) {
+    return <BooleanBadgeField source="value" trueLabel="Sí" falseLabel="No" />;
+  }
+
+  return <TextField source="value" />;
+};
+
+const CharacteristicLink = () => {
+  const record = useRecordContext<{ id?: string; name?: string }>();
+  if (!record?.id) {
+    return <span>{record?.name ?? "-"}</span>;
+  }
+
+  return (
+    <Link
+      to={`/characteristics/${record.id}/show`}
+      className="text-primary hover:underline"
+    >
+      {record.name}
+    </Link>
+  );
+};
+
+const CategoryBadgeLink = () => {
+  const record = useRecordContext<{ id?: string; name?: string }>();
+
+  if (!record?.id) {
+    return <Badge variant="outline">{record?.name ?? "Categoría"}</Badge>;
+  }
+
+  return (
+    <Link
+      to={`/categories/${record.id}/show`}
+      className="inline-flex"
+    >
+      <Badge variant="outline" className="hover:bg-accent">
+        {record.name}
+      </Badge>
+    </Link>
+  );
+};
+
+const ProductCategoriesPanel = () => {
+  const record = useRecordContext<{ categories?: Array<{ id: string; name: string }> }>();
+  const categories = record?.categories ?? [];
+
+  if (categories.length === 0) {
+    return <p className="text-sm text-muted-foreground">Sin categorías</p>;
+  }
+
+  return (
+    <DataTable data={categories} bulkActionButtons={false} rowClick={false}>
+      <DataTable.Col source="name" label="Categoría">
+        <CategoryBadgeLink />
+      </DataTable.Col>
+    </DataTable>
+  );
+};
+
+const VariantImageThumb = () => {
+  const record = useRecordContext<{ image?: { url?: string; alt?: string } | null }>();
+
+  if (!record?.image?.url) {
+    return <span className="text-xs text-muted-foreground">Sin imagen</span>;
+  }
+
+  return (
+    <img
+      src={record.image.url}
+      alt={record.image.alt ?? "Imagen de variante"}
+      className="h-12 w-12 rounded-md object-cover border"
+    />
   );
 };
 
@@ -137,11 +222,7 @@ export const ProductShow = () => (
       
       <div className="w-full">
         <h3 className="text-lg font-semibold mb-2">Categorías</h3>
-        <ReferenceArrayField source="categoryIds" reference="categories">
-          <SingleFieldList>
-            <BadgeField source="name" />
-          </SingleFieldList>
-        </ReferenceArrayField>
+        <ProductCategoriesPanel />
       </div>
 
       <CharacteristicsPanel />

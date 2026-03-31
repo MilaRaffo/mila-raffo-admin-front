@@ -1,5 +1,6 @@
 import {
   ArrayInput,
+  ShortIdField,
   Create,
   DataTable,
   NumberInput,
@@ -39,7 +40,7 @@ const OrderItemsPanel = () => {
   }
 
   return (
-    <DataTable data={items as any[]} bulkActionButtons={false}>
+    <DataTable data={items as any[]} bulkActionButtons={false} rowClick={false}>
       <DataTable.Col source="productName" label="Producto" />
       <DataTable.Col source="sku" label="SKU" />
       <DataTable.Col source="quantity" label="Cantidad" />
@@ -52,7 +53,9 @@ const OrderItemsPanel = () => {
 export const OrderList = () => (
   <List title="Órdenes">
     <DataTable>
-      <DataTable.Col source="id" />
+      <DataTable.Col source="id" label="ID">
+        <ShortIdField source="id" />
+      </DataTable.Col>
       <DataTable.Col source="orderNumber" label="Número" />
       <DataTable.Col source="status" />
       <DataTable.Col source="paymentStatus" label="Pago" />

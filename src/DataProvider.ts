@@ -122,22 +122,52 @@ const getResourcePath = (resource: string) => {
     return path;
 };
 
+const normalizeIdArray = (value: unknown): string[] | undefined => {
+    if (Array.isArray(value)) {
+        const normalized = value
+            .map((item) => String(item).trim())
+            .filter(Boolean);
+        return normalized.length > 0 ? normalized : undefined;
+    }
+
+    if (typeof value === "string") {
+        const normalized = value
+            .split(",")
+            .map((item) => item.trim())
+            .filter(Boolean);
+        return normalized.length > 0 ? normalized : undefined;
+    }
+
+    return undefined;
+};
+
 const sanitizePayload = (resource: string, data: any) => {
-    if (resource !== "products") return data;
+    if (resource === "products") {
+        const characteristics = Array.isArray(data.characteristics)
+            ? data.characteristics
+                .filter((item: any) => item?.characteristicId)
+                .map((item: any) => ({
+                    characteristicId: item.characteristicId,
+                    value: String(item.value ?? ""),
+                }))
+            : undefined;
 
-    const characteristics = Array.isArray(data.characteristics)
-        ? data.characteristics
-            .filter((item: any) => item?.characteristicId)
-            .map((item: any) => ({
-                characteristicId: item.characteristicId,
-                value: String(item.value ?? ""),
-            }))
-        : undefined;
+        return {
+            ...data,
+            categoryIds: normalizeIdArray(data.categoryIds),
+            characteristics,
+        };
+    }
 
-    return {
-        ...data,
-        characteristics,
-    };
+    if (resource === "variants") {
+        const { imageFiles, ...variantData } = data;
+        return {
+            ...variantData,
+            leatherIds: normalizeIdArray(variantData.leatherIds),
+        };
+    }
+
+    return data;
 };
 
 export const dataProvider: DataProvider = {
@@ -260,6 +290,64 @@ export const dataProvider: DataProvider = {
             }
         }
 
+        if (resource === "variants") {
+            const variantData = params.data as {
+                imageFiles?: Array<{ rawFile?: File; title?: string }> | { rawFile?: File; title?: string };
+                sku?: string;
+            };
+
+            const record = await apiRequest<RaRecord>(basePath, {
+                method: "POST",
+                body: JSON.stringify(sanitizePayload(resource, variantData)),
+            });
+
+            const files = Array.isArray(variantData.imageFiles)
+                ? variantData.imageFiles
+                : variantData.imageFiles
+                    ? [variantData.imageFiles]
+                    : [];
+
+            const uploadCandidates = files
+                .map((fileItem, index) => ({
+                    rawFile: fileItem?.rawFile,
+                    alt:
+                        typeof fileItem?.title === "string" && fileItem.title.trim().length > 0
+                            ? fileItem.title
+                            : `${variantData.sku ?? "Variante"} - ${index + 1}`,
+                }))
+                .filter((item) => item.rawFile instanceof File) as Array<{
+                    rawFile: File;
+                    alt: string;
+                }>;
+
+            if (uploadCandidates.length > 0) {
+                await Promise.all(
+                    uploadCandidates.map(async (item) => {
+                        const formData = new FormData();
+                        formData.append("file", item.rawFile);
+                        formData.append("variantId", String(record.id));
+                        formData.append("alt", item.alt);
+
+                        await apiRequest<RaRecord>("/images/upload", {
+                            method: "POST",
+                            body: formData,
+                        });
+                    }),
+                );
+            }
+
+            const hydratedRecord = await apiRequest<RaRecord>(
+                `${basePath}/${record.id}`,
+                {
+                    method: "GET",
+                },
+            );
+
+            return {
+                data: normalizeRecord(resource, hydratedRecord),
+            } as any;
+        }
+
         const record = await apiRequest<RaRecord>(basePath, {
             method: "POST",
             body: JSON.stringify(sanitizePayload(resource, params.data)),
@@ -272,6 +360,65 @@ export const dataProvider: DataProvider = {
 
     async update(resource, params) {
         const basePath = getResourcePath(resource);
+
+        if (resource === "variants") {
+            const variantData = params.data as {
+                imageFiles?: Array<{ rawFile?: File; title?: string }> | { rawFile?: File; title?: string };
+                sku?: string;
+            };
+
+            const updatedVariant = await apiRequest<RaRecord>(`${basePath}/${params.id}`, {
+                method: "PATCH",
+                body: JSON.stringify(sanitizePayload(resource, variantData)),
+            });
+
+            const files = Array.isArray(variantData.imageFiles)
+                ? variantData.imageFiles
+                : variantData.imageFiles
+                    ? [variantData.imageFiles]
+                    : [];
+
+            const uploadCandidates = files
+                .map((fileItem, index) => ({
+                    rawFile: fileItem?.rawFile,
+                    alt:
+                        typeof fileItem?.title === "string" && fileItem.title.trim().length > 0
+                            ? fileItem.title
+                            : `${variantData.sku ?? "Variante"} - ${index + 1}`,
+                }))
+                .filter((item) => item.rawFile instanceof File) as Array<{
+                    rawFile: File;
+                    alt: string;
+                }>;
+
+            if (uploadCandidates.length > 0) {
+                await Promise.all(
+                    uploadCandidates.map(async (item) => {
+                        const formData = new FormData();
+                        formData.append("file", item.rawFile);
+                        formData.append("variantId", String(params.id));
+                        formData.append("alt", item.alt);
+
+                        await apiRequest<RaRecord>("/images/upload", {
+                            method: "POST",
+                            body: formData,
+                        });
+                    }),
+                );
+            }
+
+            const hydratedRecord = await apiRequest<RaRecord>(
+                `${basePath}/${updatedVariant.id}`,
+                {
+                    method: "GET",
+                },
+            );
+
+            return {
+                data: normalizeRecord(resource, hydratedRecord),
+            } as any;
+        }
+
         const record = await apiRequest<RaRecord>(`${basePath}/${params.id}`, {
             method: "PATCH",
             body: JSON.stringify(sanitizePayload(resource, params.data)),

@@ -7,6 +7,7 @@ import {
     SelectInput,
     Show,
     ShowButton,
+    ShortIdField,
     SimpleForm,
     TextField,
     TextInput,
@@ -29,7 +30,9 @@ const unitChoices = [
 export const CharacteristicList = () => (
     <List title="Características">
         <DataTable>
-            <DataTable.Col source="id" />
+            <DataTable.Col source="id" label="ID">
+                <ShortIdField source="id" />
+            </DataTable.Col>
             <DataTable.Col source="name" />
             <DataTable.Col source="dataType" />
             <DataTable.Col source="units" />

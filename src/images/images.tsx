@@ -9,6 +9,7 @@ import {
   ReferenceInput,
   Show,
   ShowButton,
+  ShortIdField,
   SimpleForm,
   TextField,
   TextInput,
@@ -52,7 +53,9 @@ export const ImageList = () => (
       <DataTable.Col source="url" label="Preview">
         <ImageThumb />
       </DataTable.Col>
-      <DataTable.Col source="id" />
+      <DataTable.Col source="id" label="ID">
+        <ShortIdField source="id" />
+      </DataTable.Col>
       <DataTable.Col source="alt" label="Descripción" />
       <DataTable.Col source="variant.sku" label="Variante" />
       <DataTable.Col label="Ver">

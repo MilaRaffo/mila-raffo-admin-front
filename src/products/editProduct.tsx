@@ -1,5 +1,6 @@
 import {
   ArrayInput,
+  AutocompleteArrayInput,
   AutocompleteInput,
   BooleanInput,
   Edit,
@@ -28,7 +29,7 @@ export const ProductEdit = () => (
       <TextInput source="name" label="Nombre" validate={validators.productName} />
       <TextInput source="description" multiline rows={4} label="Descripción" validate={validators.productDescription} />
       <ReferenceArrayInput source="categoryIds" reference="categories">
-        <AutocompleteInput label="Categorias" />
+        <AutocompleteArrayInput label="Categorías" optionText="name" />
       </ReferenceArrayInput>
       <NumberInput source="basePrice" label="Precio base" step={0.01} min={0} validate={validators.price} />
       <BooleanInput source="available" label="Disponible" />
