@@ -83,6 +83,7 @@ const VariantsPanel = () => {
         </DataTable.Col>
         <DataTable.Col source="sku" label="SKU" />
         <DataTable.Col source="price" label="Precio" />
+        <DataTable.Col source="stock" label="Stock" />
         <DataTable.Col source="isAvailable" label="Disponibilidad">
           <VariantAvailabilityBadge />
         </DataTable.Col>

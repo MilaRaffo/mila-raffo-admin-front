@@ -33,6 +33,7 @@ export const ProductEdit = () => (
       </ReferenceArrayInput>
       <NumberInput source="basePrice" label="Precio base" step={0.01} min={0} validate={validators.price} />
       <BooleanInput source="available" label="Disponible" />
+      <BooleanInput source="isCustomizable" label="Permite personalización" />
       <ArrayInput source="characteristics" label="Características">
         <SimpleFormIterator inline>
           <ReferenceInput source="characteristicId" reference="characteristics" label="Característica">

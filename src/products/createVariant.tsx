@@ -19,8 +19,9 @@ export const VariantCreate = () => {
         <TextInput source="productId" label="ID del Producto" disabled />
         <TextInput source="sku" label="SKU" validate={required()} />
         <NumberInput source="price" label="Precio" step={0.01} min={0} validate={required()} />
+        <NumberInput source="stock" label="Stock" step={1} min={0} validate={required()} />
         
-        <ReferenceArrayInput source="leatherIds" reference="leathers" label="Cueros">
+        <ReferenceArrayInput source="leatherIds" reference="leathers" label="Colores">
           <AutocompleteArrayInput optionText="name" />
         </ReferenceArrayInput>
       </SimpleForm>

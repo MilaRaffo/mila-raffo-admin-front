@@ -26,9 +26,25 @@ const LeatherImageThumb = () => {
     return (
         <img
             src={record.image.url}
-            alt={record.image.alt ?? "Imagen del cuero"}
+            alt={record.image.alt ?? "Imagen del color"}
             className="h-12 w-12 rounded-md object-cover border"
         />
+    );
+};
+
+const ColorPreview = () => {
+    const record = useRecordContext<{ hex?: string }>();
+    if (!record?.hex) {
+        return <span className="text-xs text-muted-foreground">Sin color</span>;
+    }
+    return (
+        <div className="flex items-center gap-2">
+            <div
+                className="h-6 w-6 rounded border"
+                style={{ backgroundColor: record.hex }}
+            />
+            <span className="text-sm">{record.hex}</span>
+        </div>
     );
 };
 
@@ -40,14 +56,14 @@ const LeatherImage = () => {
     return (
         <img
             src={record.image.url}
-            alt={record.image.alt ?? "Imagen del cuero"}
+            alt={record.image.alt ?? "Imagen del color"}
             className="h-44 w-44 rounded-xl object-cover border"
         />
     );
 };
 
 export const LeatherList = () => (
-    <List title="Cueros">
+    <List title="Colores">
         <DataTable>
             <DataTable.Col source="image.url" label="Imagen">
                 <LeatherImageThumb />
@@ -55,9 +71,11 @@ export const LeatherList = () => (
             <DataTable.Col source="id" label="ID">
                 <ShortIdField source="id" />
             </DataTable.Col>
-            <DataTable.Col source="name" />
-            <DataTable.Col source="code" />
-            <DataTable.Col source="color" />
+            <DataTable.Col source="name" label="Nombre" />
+            <DataTable.Col source="code" label="Código" />
+            <DataTable.Col source="hex" label="Color">
+                <ColorPreview />
+            </DataTable.Col>
             <DataTable.Col source="isActive" label="Activo">
                 <BooleanBadgeField source="isActive" trueLabel="Sí" falseLabel="No" />
             </DataTable.Col>
@@ -72,12 +90,17 @@ export const LeatherList = () => (
 );
 
 export const LeatherCreate = () => (
-    <Create title="Crear cuero">
+    <Create title="Crear color">
         <SimpleForm>
-            <TextInput source="name" validate={validators.leatherName} />
-            <TextInput source="code" validate={validators.leatherCode} />
-            <TextInput source="color" validate={validators.leatherColor} />
-            <BooleanInput source="isActive" />
+            <TextInput source="name" label="Nombre del color" validate={validators.leatherName} />
+            <TextInput source="code" label="Código" validate={validators.leatherCode} />
+            <TextInput 
+                source="hex" 
+                label="Código hexadecimal" 
+                placeholder="#000000"
+                validate={validators.leatherColor} 
+            />
+            <BooleanInput source="isActive" label="Activo" />
             <ReferenceInput source="imageId" reference="images" label="Imagen">
                 <AutocompleteInput optionText={(choice: any) => choice?.alt || choice?.id} />
             </ReferenceInput>
@@ -86,13 +109,18 @@ export const LeatherCreate = () => (
 );
 
 export const LeatherEdit = () => (
-    <Edit title="Editar cuero">
+    <Edit title="Editar color">
         <SimpleForm>
             <TextInput source="id" disabled />
-            <TextInput source="name" validate={validators.leatherName} />
-            <TextInput source="code" validate={validators.leatherCode} />
-            <TextInput source="color" validate={validators.leatherColor} />
-            <BooleanInput source="isActive" />
+            <TextInput source="name" label="Nombre del color" validate={validators.leatherName} />
+            <TextInput source="code" label="Código" validate={validators.leatherCode} />
+            <TextInput 
+                source="hex" 
+                label="Código hexadecimal"
+                placeholder="#000000"
+                validate={validators.leatherColor} 
+            />
+            <BooleanInput source="isActive" label="Activo" />
             <ReferenceInput source="imageId" reference="images" label="Imagen">
                 <AutocompleteInput optionText={(choice: any) => choice?.alt || choice?.id} />
             </ReferenceInput>
