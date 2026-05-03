@@ -97,20 +97,28 @@ const VariantEditImages = () => {
   );
 };
 
-const VariantLeathers = () => {
-  const record = useRecordContext<{ leathers?: Array<{ id: string; name?: string; code?: string; color?: string }> }>();
-  const leathers = (record?.leathers ?? []).filter((leather) => leather.id);
+const VariantColor = () => {
+  const record = useRecordContext<{ color?: { id: string; name?: string; code?: string; hex?: string; image?: any } | null }>();
+  const color = record?.color;
 
-  if (leathers.length === 0) {
-    return <p className="text-sm text-muted-foreground">No hay cueros vinculados.</p>;
+  if (!color) {
+    return <p className="text-sm text-muted-foreground">Sin color asignado</p>;
   }
 
   return (
-    <DataTable data={leathers} bulkActionButtons={false} rowClick={false}>
-      <DataTable.Col source="name" label="Nombre" />
-      <DataTable.Col source="code" label="Código" />
-      <DataTable.Col source="color" label="Color" />
-    </DataTable>
+    <div className="flex items-center gap-2">
+      {color.hex && (
+        <div
+          className="w-6 h-6 rounded border"
+          style={{ backgroundColor: color.hex }}
+          title={color.hex}
+        />
+      )}
+      <div>
+        <p className="font-medium text-sm">{color.name}</p>
+        <p className="text-xs text-muted-foreground">{color.code} • {color.hex}</p>
+      </div>
+    </div>
   );
 };
 
@@ -169,7 +177,11 @@ const VariantCreateForm = () => {
         )}
         <TextInput source="sku" validate={validators.sku} />
         <NumberInput source="price" min={0} step={0.01} validate={validators.price} />
+        <NumberInput source="stock" min={0} step={1} label="Stock" />
         <BooleanInput source="isAvailable" />
+        <ReferenceInput source="colorId" reference="colors" label="Color">
+          <AutocompleteInput optionText="name" />
+        </ReferenceInput>
         <FileInput
           source="imageFiles"
           label="Imágenes"
@@ -179,9 +191,6 @@ const VariantCreateForm = () => {
         >
           <FileField source="src" title="title" />
         </FileInput>
-        <ReferenceArrayInput source="leatherIds" reference="leathers" label="Cueros">
-          <AutocompleteArrayInput optionText="name" />
-        </ReferenceArrayInput>
       </SimpleForm>
     </Create>
   );
@@ -193,7 +202,11 @@ export const VariantEdit = () => (
       <TextInput source="id" disabled />
       <TextInput source="sku" validate={validators.sku} />
       <NumberInput source="price" min={0} step={0.01} validate={validators.price} />
+      <NumberInput source="stock" min={0} step={1} label="Stock" />
       <BooleanInput source="isAvailable" />
+      <ReferenceInput source="colorId" reference="colors" label="Color">
+        <AutocompleteInput optionText="name" />
+      </ReferenceInput>
       <div className="space-y-2">
         <div className="text-sm font-medium text-muted-foreground">Imágenes actuales</div>
         <VariantEditImages />
@@ -207,9 +220,6 @@ export const VariantEdit = () => (
       >
         <FileField source="src" title="title" />
       </FileInput>
-      <ReferenceArrayInput source="leatherIds" reference="leathers" label="Cueros">
-        <AutocompleteArrayInput optionText="name" />
-      </ReferenceArrayInput>
     </SimpleForm>
   </Edit>
 );
@@ -247,8 +257,8 @@ export const VariantShow = () => (
         <VariantImages />
       </div>
       <div className="rounded-lg border p-4 md:col-span-2">
-        <div className="mb-2 text-sm font-medium text-muted-foreground">Cueros asociados</div>
-        <VariantLeathers />
+        <div className="mb-2 text-sm font-medium text-muted-foreground">Color</div>
+        <VariantColor />
       </div>
     </div>
   </Show>

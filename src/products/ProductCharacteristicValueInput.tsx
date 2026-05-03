@@ -46,11 +46,11 @@ export const ProductCharacteristicValueInput = () => {
 
   if (isBoolean) {
     return (
-      <div className="space-y-1">
+      <div className="flex">
         <BooleanInput
+        className='w-auto'
           source="value"
           label="Valor"
-          helperText="Selecciona Sí o No"
           format={(value: unknown) => value === true || value === "true"}
           parse={(value: boolean) => (value ? "true" : "false")}
         />

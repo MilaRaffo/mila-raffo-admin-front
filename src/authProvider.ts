@@ -9,7 +9,7 @@ export const authProvider: AuthProvider = {
       email: params.email,
       password: params.password,
     };
-
+    
     const response = await apiRequest<AuthResponse>("/auth/admin/login", {
       method: "POST",
       body: JSON.stringify(payload),

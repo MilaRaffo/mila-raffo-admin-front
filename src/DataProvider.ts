@@ -17,7 +17,7 @@ const resourcePath: Record<string, string> = {
     products: "/products",
     categories: "/categories",
     characteristics: "/characteristics",
-    leathers: "/leathers",
+    colors: "/colors",
     variants: "/variants",
     images: "/images",
     users: "/users",
@@ -54,12 +54,22 @@ const normalizeRecord = <T extends RaRecord>(resource: string, record: T): T => 
     if (resource === "variants") {
         const variant = record as T & {
             product?: { id: string } | null;
-            leathers?: Array<{ id: string }>;
+            color?: { id: string } | null;
         };
         return {
             ...variant,
             productId: variant.product?.id,
-            leatherIds: (variant.leathers ?? []).map((leather) => leather.id),
+            colorId: variant.color?.id,
+        } as T;
+    }
+
+    if (resource === "colors") {
+        const color = record as T & {
+            image?: { id: string } | null;
+        };
+        return {
+            ...color,
+            imageId: color.image?.id,
         } as T;
     }
 
@@ -163,7 +173,7 @@ const sanitizePayload = (resource: string, data: any) => {
         const { imageFiles, ...variantData } = data;
         return {
             ...variantData,
-            leatherIds: normalizeIdArray(variantData.leatherIds),
+            colorId: variantData.colorId || null,
         };
     }
 

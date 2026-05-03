@@ -33,7 +33,7 @@ export const App = () => {
             <Resource name='products' options={{ label: 'Productos' }} list={ProductList} create={ProductCreate} edit={ProductEdit} show={ProductShow} recordRepresentation="name" />
             <Resource name='categories' options={{ label: 'Categorías' }} list={CategoryList} create={CategoryCreate} edit={CategoryEdit} show={CategoryShow} recordRepresentation="name" />
             <Resource name='characteristics' options={{ label: 'Características' }} list={CharacteristicList} create={CharacteristicCreate} edit={CharacteristicEdit} show={CharacteristicShow} recordRepresentation="name" />
-            <Resource name='leathers' options={{ label: 'Cueros' }} list={LeatherList} create={LeatherCreate} edit={LeatherEdit} show={LeatherShow} recordRepresentation="name" />
+            <Resource name='colors' options={{ label: 'Colores' }} list={LeatherList} create={LeatherCreate} edit={LeatherEdit} show={LeatherShow} recordRepresentation="name" />
             <Resource name='images' options={{ label: 'Imágenes' }} list={ImageList} create={ImageCreate} edit={ImageEdit} show={ImageShow} recordRepresentation="alt" />
             <Resource name='variants' options={{ label: 'Variantes' }} list={VariantList} create={VariantCreate} edit={VariantEdit} show={VariantShow} recordRepresentation="sku" />
             <Resource name='orders' options={{ label: 'Órdenes' }} list={OrderList} create={OrderCreate} edit={OrderEdit} show={OrderShow} recordRepresentation="orderNumber" />

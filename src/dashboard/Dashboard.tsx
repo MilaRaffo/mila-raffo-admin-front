@@ -33,7 +33,7 @@ export const Dashboard = () => {
     sort: { field: "id", order: "DESC" },
   });
 
-    const { total: leathers = 0 } = useGetList("leathers", {
+    const { total: colors = 0 } = useGetList("colors", {
     pagination: { page: 1, perPage: 1 },
     sort: { field: "id", order: "DESC" },
   });
@@ -49,7 +49,7 @@ export const Dashboard = () => {
         <KpiCard title="Usuarios" value={users} />
         <KpiCard title="Órdenes" value={orders} />
         <KpiCard title="Productos" value={products} />
-        <KpiCard title="Cueros" value={leathers} />
+        <KpiCard title="Colores" value={colors} />
         <KpiCard title="Categorías" value={categories} />
       </div>
     </div>

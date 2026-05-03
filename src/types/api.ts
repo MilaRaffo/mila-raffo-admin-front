@@ -145,22 +145,23 @@ export interface Characteristic {
   units?: Measureunits;
 }
 
-export interface CreateLeatherDto {
+export interface CreateColorDto {
   name: string;
   code: string;
-  color: string;
+  hex: string;
   isActive?: boolean;
   imageId?: UUID;
 }
 
-export type UpdateLeatherDto = Partial<CreateLeatherDto>;
+export type UpdateColorDto = Partial<CreateColorDto>;
 
-export interface Leather {
+export interface Color {
   id: UUID;
   name: string;
   code: string;
-  color: string;
+  hex: string;
   isActive: boolean;
+  imageId: UUID | null;
   image: {
     url: string;
     alt: string;
@@ -171,8 +172,9 @@ export interface CreateVariantDto {
   productId: UUID;
   sku: string;
   price: number;
+  stock: number;
   isAvailable?: boolean;
-  leatherIds?: UUID[];
+  colorId?: UUID;
 }
 
 export type UpdateVariantDto = Partial<Omit<CreateVariantDto, "productId">>;
@@ -181,25 +183,26 @@ export interface Variant {
   id: UUID;
   sku: string;
   price: number;
+  stock: number;
   isAvailable: boolean;
   product: {
     id: UUID;
     name: string;
   } | null;
-  images: Array<{
-    url: string;
-    alt: string;
-  }>;
-  leathers: Array<{
+  color: {
     id: UUID;
     name: string;
     code: string;
-    color: string;
+    hex: string;
     isActive: boolean;
     image: {
       url: string;
       alt: string;
     } | null;
+  } | null;
+  images: Array<{
+    url: string;
+    alt: string;
   }>;
 }
 

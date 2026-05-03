@@ -3,8 +3,8 @@ import {
   SimpleForm,
   TextInput,
   NumberInput,
-  ReferenceArrayInput,
-  AutocompleteArrayInput,
+  ReferenceInput,
+  AutocompleteInput,
 } from "@/components/admin";
 import { required } from "ra-core";
 import { useLocation } from "react-router-dom";
@@ -21,9 +21,9 @@ export const VariantCreate = () => {
         <NumberInput source="price" label="Precio" step={0.01} min={0} validate={required()} />
         <NumberInput source="stock" label="Stock" step={1} min={0} validate={required()} />
         
-        <ReferenceArrayInput source="leatherIds" reference="leathers" label="Colores">
-          <AutocompleteArrayInput optionText="name" />
-        </ReferenceArrayInput>
+        <ReferenceInput source="colorId" reference="colors" label="Color">
+          <AutocompleteInput optionText="name" />
+        </ReferenceInput>
       </SimpleForm>
     </Create>
   );
