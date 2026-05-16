@@ -21,10 +21,13 @@ const dataTypeChoices = [
 ];
 
 const unitChoices = [
-    { id: "centimeter", name: "centimeter" },
-    { id: "meter", name: "meter" },
-    { id: "kilogram", name: "kilogram" },
-    { id: "gram", name: "gram" },
+    { id: "Kg", name: "Kg" },
+    { id: "g", name: "g" },
+    { id: "m", name: "m" },
+    { id: "cm", name: "cm" },
+    { id: "mm", name: "mm" },
+    { id: "L", name: "L" },
+    { id: "in", name: "in" },
 ];
 
 export const CharacteristicList = () => (

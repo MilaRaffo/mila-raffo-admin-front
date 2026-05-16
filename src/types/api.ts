@@ -122,10 +122,13 @@ export const DATA_TYPE = {
 export type DataType = (typeof DATA_TYPE)[keyof typeof DATA_TYPE];
 
 export const MEASURE_UNITS = {
-  CENTIMETER: "centimeter",
-  METER: "meter",
-  KILOGRAM: "kilogram",
-  GRAM: "gram",
+  KILOGRAM: "Kg",
+  GRAM: "g",
+  METER: "m",
+  CENTIMETER: "cm",
+  MILLIMETER: "mm",
+  LITER: "L",
+  INCH: "in",
 } as const;
 
 export type Measureunits = (typeof MEASURE_UNITS)[keyof typeof MEASURE_UNITS];
