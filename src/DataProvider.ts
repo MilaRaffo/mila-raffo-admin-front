@@ -151,6 +151,45 @@ const normalizeIdArray = (value: unknown): string[] | undefined => {
     return undefined;
 };
 
+type VariantPayloadInput = {
+    productId?: unknown;
+    sku?: unknown;
+    price?: unknown;
+    stock?: unknown;
+    isAvailable?: unknown;
+    colorId?: unknown;
+};
+
+const sanitizeVariantPayload = (data: VariantPayloadInput, options: { includeProductId: boolean }) => {
+    const payload: Record<string, unknown> = {};
+
+    if (options.includeProductId && data.productId) {
+        payload.productId = data.productId;
+    }
+
+    if (data.sku !== undefined) {
+        payload.sku = data.sku;
+    }
+
+    if (data.price !== undefined) {
+        payload.price = data.price;
+    }
+
+    if (data.stock !== undefined) {
+        payload.stock = data.stock;
+    }
+
+    if (data.isAvailable !== undefined) {
+        payload.isAvailable = data.isAvailable;
+    }
+
+    if (data.colorId !== undefined) {
+        payload.colorId = data.colorId || null;
+    }
+
+    return payload;
+};
+
 const sanitizePayload = (resource: string, data: any) => {
     if (resource === "products") {
         const characteristics = Array.isArray(data.characteristics)
@@ -170,11 +209,7 @@ const sanitizePayload = (resource: string, data: any) => {
     }
 
     if (resource === "variants") {
-        const { imageFiles, ...variantData } = data;
-        return {
-            ...variantData,
-            colorId: variantData.colorId || null,
-        };
+        return sanitizeVariantPayload(data, { includeProductId: true });
     }
 
     return data;
@@ -379,7 +414,7 @@ export const dataProvider: DataProvider = {
 
             const updatedVariant = await apiRequest<RaRecord>(`${basePath}/${params.id}`, {
                 method: "PATCH",
-                body: JSON.stringify(sanitizePayload(resource, variantData)),
+                body: JSON.stringify(sanitizeVariantPayload(variantData, { includeProductId: false })),
             });
 
             const files = Array.isArray(variantData.imageFiles)
@@ -442,9 +477,13 @@ export const dataProvider: DataProvider = {
     async updateMany(resource, params) {
         const basePath = getResourcePath(resource);
         const result = await Promise.all(params.ids.map(async (id) => {
+            const payload = resource === "variants"
+                ? sanitizeVariantPayload(params.data, { includeProductId: false })
+                : sanitizePayload(resource, params.data);
+
             await apiRequest(`${basePath}/${id}`, {
                 method: "PATCH",
-                body: JSON.stringify(sanitizePayload(resource, params.data)),
+                body: JSON.stringify(payload),
             });
             return id;
         }));

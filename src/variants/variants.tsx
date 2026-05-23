@@ -1,5 +1,4 @@
 import {
-  AutocompleteArrayInput,
   Create,
   BooleanBadgeField,
   DataTable,
@@ -9,7 +8,6 @@ import {
   FileInput,
   List,
   NumberInput,
-  ReferenceArrayInput,
   ReferenceInput,
   ShortIdField,
   Show,
@@ -21,7 +19,6 @@ import {
   BooleanInput,
   NumberField,
 } from "@/components/admin";
-import { Badge } from "@/components/ui/badge";
 import { validators } from "@/lib/validators";
 import { useRecordContext } from "ra-core";
 import { useLocation } from "react-router";
@@ -97,8 +94,30 @@ const VariantEditImages = () => {
   );
 };
 
+type VariantFormData = {
+  sku?: string;
+  price?: number;
+  stock?: number;
+  isAvailable?: boolean;
+  colorId?: string | null;
+  imageFiles?: unknown;
+};
+
+type VariantCreateFormData = VariantFormData & {
+  productId?: string;
+};
+
+const transformVariantUpdatePayload = (data: VariantFormData) => ({
+  sku: data.sku,
+  price: data.price,
+  stock: data.stock,
+  isAvailable: data.isAvailable,
+  colorId: data.colorId || null,
+  imageFiles: data.imageFiles,
+});
+
 const VariantColor = () => {
-  const record = useRecordContext<{ color?: { id: string; name?: string; code?: string; hex?: string; image?: any } | null }>();
+  const record = useRecordContext<{ color?: { id: string; name?: string; code?: string; hex?: string; image?: unknown } | null }>();
   const color = record?.color;
 
   if (!color) {
@@ -162,7 +181,7 @@ const VariantCreateForm = () => {
     <Create
       title="Crear variante"
       redirect={preselectedProductId ? `/products/${preselectedProductId}/show` : "list"}
-      transform={(data: any) => ({
+      transform={(data: VariantCreateFormData) => ({
         ...data,
         productId: preselectedProductId ?? data.productId,
       })}
@@ -197,7 +216,7 @@ const VariantCreateForm = () => {
 };
 
 export const VariantEdit = () => (
-  <Edit title="Editar variante">
+  <Edit title="Editar variante" transform={transformVariantUpdatePayload}>
     <SimpleForm>
       <TextInput source="id" disabled />
       <TextInput source="sku" validate={validators.sku} />
