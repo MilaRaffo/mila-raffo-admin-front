@@ -30,6 +30,41 @@ const getErrorMessage = (body: unknown, fallback: string) => {
   return fallback;
 };
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  value !== null && typeof value === "object" && !Array.isArray(value);
+
+const sanitizeVariantUpdateBody = (body: unknown) => {
+  if (!isRecord(body)) return body;
+
+  const payload: Record<string, unknown> = {};
+
+  if (body.sku !== undefined) payload.sku = body.sku;
+  if (body.price !== undefined) payload.price = body.price;
+  if (body.stock !== undefined) payload.stock = body.stock;
+  if (body.isAvailable !== undefined) payload.isAvailable = body.isAvailable;
+  if (body.colorId !== undefined) payload.colorId = body.colorId || null;
+
+  return payload;
+};
+
+const sanitizeRequestInit = (path: string, init: RequestInit): RequestInit => {
+  const method = (init.method ?? "GET").toUpperCase();
+  const isVariantUpdate = method === "PATCH" && /^\/variants\/[^/]+$/.test(path);
+
+  if (!isVariantUpdate || typeof init.body !== "string") {
+    return init;
+  }
+
+  try {
+    return {
+      ...init,
+      body: JSON.stringify(sanitizeVariantUpdateBody(JSON.parse(init.body))),
+    };
+  } catch {
+    return init;
+  }
+};
+
 const refreshTokens = async (): Promise<boolean> => {
   const session = authStorage.get();
   if (!session?.refreshToken) return false;
@@ -93,10 +128,10 @@ export const apiRequest = async <T>(
   }
 
   // Prevent browser conditional cache revalidation that can yield 304 for API GET calls.
-  const requestInit: RequestInit = {
+  const requestInit: RequestInit = sanitizeRequestInit(path, {
     ...init,
     headers: requestHeaders,
-  };
+  });
 
   if ((requestInit.method ?? "GET").toUpperCase() === "GET") {
     if (!requestHeaders.has("Cache-Control")) {
