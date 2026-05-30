@@ -200,11 +200,19 @@ const sanitizePayload = (resource: string, data: any) => {
                 }))
             : undefined;
 
-        return {
-            ...data,
-            categoryIds: normalizeIdArray(data.categoryIds),
-            characteristics,
-        };
+        // Only send fields accepted by CreateProductDto / UpdateProductDto.
+        // Never spread the full record: it includes categories[], variants[], etc.
+        // which are rejected by the backend's forbidNonWhitelisted ValidationPipe.
+        const payload: Record<string, unknown> = {};
+        if (data.name !== undefined)          payload.name = data.name;
+        if (data.description !== undefined)   payload.description = data.description;
+        if (data.basePrice !== undefined)     payload.basePrice = data.basePrice;
+        if (data.available !== undefined)     payload.available = data.available;
+        if (data.isCustomizable !== undefined) payload.isCustomizable = data.isCustomizable;
+        const categoryIds = normalizeIdArray(data.categoryIds);
+        if (categoryIds !== undefined)        payload.categoryIds = categoryIds;
+        if (characteristics !== undefined)    payload.characteristics = characteristics;
+        return payload;
     }
 
     if (resource === "variants") {
