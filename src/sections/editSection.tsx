@@ -5,11 +5,8 @@ import {
   NumberInput,
   BooleanInput,
   SelectInput,
-  ArrayInput,
-  SimpleFormIterator,
-  required,
 } from "@/components/admin";
-import { ReferenceInput, AutocompleteInput } from "@/components/admin";
+import { required } from "ra-core";
 
 const SECTION_TYPES = [
   { id: "hero", name: "Hero" },
@@ -56,33 +53,6 @@ export const SectionEdit = () => (
         source="isActive"
         label="Activo"
       />
-
-      <ArrayInput
-        source="items"
-        label="Items de la sección"
-      >
-        <SimpleFormIterator inline>
-          <TextInput
-            source="title"
-            label="Título del item"
-          />
-          <TextInput
-            source="description"
-            label="Descripción"
-            multiline
-            rows={2}
-          />
-          <TextInput
-            source="url"
-            label="URL"
-            type="url"
-          />
-          <NumberInput
-            source="order"
-            label="Orden"
-          />
-        </SimpleFormIterator>
-      </ArrayInput>
     </SimpleForm>
   </Edit>
 );

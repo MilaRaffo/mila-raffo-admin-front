@@ -23,6 +23,7 @@ const resourcePath: Record<string, string> = {
     users: "/users",
     orders: "/orders",
     roles: "/roles",
+    sections: "/sections",
 };
 
 const normalizeRecord = <T extends RaRecord>(resource: string, record: T): T => {
@@ -54,30 +55,12 @@ const normalizeRecord = <T extends RaRecord>(resource: string, record: T): T => 
     if (resource === "variants") {
         const variant = record as T & {
             product?: { id: string } | null;
-<<<<<<< Updated upstream
             color?: { id: string } | null;
-=======
-            colors?: Array<{ id: string }>;
->>>>>>> Stashed changes
         };
         return {
             ...variant,
             productId: variant.product?.id,
-<<<<<<< Updated upstream
             colorId: variant.color?.id,
-        } as T;
-    }
-
-    if (resource === "colors") {
-        const color = record as T & {
-            image?: { id: string } | null;
-        };
-        return {
-            ...color,
-            imageId: color.image?.id,
-=======
-            colorIds: (variant.colors ?? []).map((color) => color.id),
->>>>>>> Stashed changes
         } as T;
     }
 
@@ -89,6 +72,14 @@ const normalizeRecord = <T extends RaRecord>(resource: string, record: T): T => 
         return {
             ...image,
             variantId: image.variant?.id,
+        } as T;
+    }
+
+    if (resource === "sections") {
+        const section = record as T & { items?: Array<Record<string, unknown>> };
+        return {
+            ...section,
+            items: section.items ?? [],
         } as T;
     }
 
@@ -217,15 +208,7 @@ const sanitizePayload = (resource: string, data: any) => {
     }
 
     if (resource === "variants") {
-<<<<<<< Updated upstream
         return sanitizeVariantPayload(data, { includeProductId: true });
-=======
-        const { imageFiles, ...variantData } = data;
-        return {
-            ...variantData,
-            colorIds: normalizeIdArray(variantData.colorIds),
-        };
->>>>>>> Stashed changes
     }
 
     return data;

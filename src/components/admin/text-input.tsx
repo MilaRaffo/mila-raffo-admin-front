@@ -1,5 +1,5 @@
 import type { InputProps } from "ra-core";
-import { useInput, useResourceContext, FieldTitle } from "ra-core";
+import { useInput, useResourceContext, FieldTitle, sanitizeInputRestProps } from "ra-core";
 import {
   FormControl,
   FormError,
@@ -47,8 +47,9 @@ export const TextInput = (props: TextInputProps) => {
     inputClassName,
     validate: _validateProp,
     format: _formatProp,
-    ...rest
+    ...rawRest
   } = props;
+  const rest = sanitizeInputRestProps(rawRest);
   const { id, field, isRequired } = useInput(props);
 
   return (

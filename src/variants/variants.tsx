@@ -94,7 +94,6 @@ const VariantEditImages = () => {
   );
 };
 
-<<<<<<< Updated upstream
 type VariantFormData = {
   sku?: string;
   price?: number;
@@ -118,7 +117,7 @@ const transformVariantUpdatePayload = (data: VariantFormData) => ({
 });
 
 const VariantColor = () => {
-  const record = useRecordContext<{ color?: { id: string; name?: string; code?: string; hex?: string; image?: unknown } | null }>();
+  const record = useRecordContext<{ color?: { id: string; name?: string; code?: string; hex?: string } | null }>();
   const color = record?.color;
 
   if (!color) {
@@ -139,35 +138,6 @@ const VariantColor = () => {
         <p className="text-xs text-muted-foreground">{color.code} • {color.hex}</p>
       </div>
     </div>
-=======
-const ColorSwatchField = () => {
-  const record = useRecordContext<{ hex?: string }>();
-  if (!record?.hex) return <span className="text-xs text-muted-foreground">—</span>;
-  return (
-    <div className="flex items-center gap-2">
-      <div className="h-5 w-5 rounded border" style={{ backgroundColor: record.hex }} />
-      <span className="text-sm">{record.hex}</span>
-    </div>
-  );
-};
-
-const VariantColors = () => {
-  const record = useRecordContext<{ colors?: Array<{ id: string; name?: string; code?: string; hex?: string }> }>();
-  const colors = (record?.colors ?? []).filter((color) => color.id);
-
-  if (colors.length === 0) {
-    return <p className="text-sm text-muted-foreground">No hay colores vinculados.</p>;
-  }
-
-  return (
-    <DataTable data={colors} bulkActionButtons={false} rowClick={false}>
-      <DataTable.Col source="name" label="Nombre" />
-      <DataTable.Col source="code" label="Código" />
-      <DataTable.Col source="hex" label="Color">
-        <ColorSwatchField />
-      </DataTable.Col>
-    </DataTable>
->>>>>>> Stashed changes
   );
 };
 
@@ -240,12 +210,6 @@ const VariantCreateForm = () => {
         >
           <FileField source="src" title="title" />
         </FileInput>
-<<<<<<< Updated upstream
-=======
-        <ReferenceArrayInput source="colorIds" reference="colors" label="Colores">
-          <AutocompleteArrayInput optionText="name" />
-        </ReferenceArrayInput>
->>>>>>> Stashed changes
       </SimpleForm>
     </Create>
   );
@@ -275,12 +239,6 @@ export const VariantEdit = () => (
       >
         <FileField source="src" title="title" />
       </FileInput>
-<<<<<<< Updated upstream
-=======
-      <ReferenceArrayInput source="colorIds" reference="colors" label="Colores">
-        <AutocompleteArrayInput optionText="name" />
-      </ReferenceArrayInput>
->>>>>>> Stashed changes
     </SimpleForm>
   </Edit>
 );
@@ -318,13 +276,8 @@ export const VariantShow = () => (
         <VariantImages />
       </div>
       <div className="rounded-lg border p-4 md:col-span-2">
-<<<<<<< Updated upstream
         <div className="mb-2 text-sm font-medium text-muted-foreground">Color</div>
         <VariantColor />
-=======
-        <div className="mb-2 text-sm font-medium text-muted-foreground">Colores asociados</div>
-        <VariantColors />
->>>>>>> Stashed changes
       </div>
     </div>
   </Show>

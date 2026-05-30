@@ -153,7 +153,6 @@ export interface CreateColorDto {
   code: string;
   hex: string;
   isActive?: boolean;
-  imageId?: UUID;
 }
 
 export type UpdateColorDto = Partial<CreateColorDto>;
@@ -164,11 +163,6 @@ export interface Color {
   code: string;
   hex: string;
   isActive: boolean;
-  imageId: UUID | null;
-  image: {
-    url: string;
-    alt: string;
-  } | null;
 }
 
 export interface CreateVariantDto {
