@@ -19,6 +19,7 @@ import { ColorList, ColorCreate, ColorEdit, ColorShow } from './colors/colors';
 import { ImageCreate, ImageEdit, ImageList, ImageShow } from './images/images';
 import { VariantList, VariantCreate, VariantEdit, VariantShow } from './variants/variants';
 import { OrderList, OrderCreate, OrderEdit, OrderShow } from './orders/orders';
+import { ShipmentEdit, ShipmentList, ShipmentShow } from './shipments/shipments';
 import { UserList, UserCreate, UserEdit, UserShow } from './users/users';
 import { SectionsList } from './sections/sections';
 import { SectionCreate } from './sections/createSection';
@@ -41,10 +42,10 @@ export const App = () => {
             <Resource name='images' options={{ label: 'Imágenes' }} list={ImageList} create={ImageCreate} edit={ImageEdit} show={ImageShow} recordRepresentation="alt" />
             <Resource name='variants' options={{ label: 'Variantes' }} list={VariantList} create={VariantCreate} edit={VariantEdit} show={VariantShow} recordRepresentation="sku" />
             <Resource name='orders' options={{ label: 'Órdenes' }} list={OrderList} create={OrderCreate} edit={OrderEdit} show={OrderShow} recordRepresentation="orderNumber" />
+            <Resource name='shipments' options={{ label: 'Envíos' }} list={ShipmentList} edit={ShipmentEdit} show={ShipmentShow} recordRepresentation="status" />
             <Resource name='users' options={{ label: 'Usuarios' }} list={UserList} create={UserCreate} edit={UserEdit} show={UserShow} recordRepresentation="email" />
             <Resource name='sections' options={{ label: 'Secciones' }} list={SectionsList} create={SectionCreate} edit={SectionEdit} recordRepresentation="title" />
             <Resource name='notifications' options={{ label: 'Notificaciones' }} list={NotificationCreate} />
         </Admin>
     )
 };
-

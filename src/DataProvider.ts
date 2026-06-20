@@ -22,6 +22,7 @@ const resourcePath: Record<string, string> = {
     images: "/images",
     users: "/users",
     orders: "/orders",
+    shipments: "/shipments",
     roles: "/roles",
     sections: "/sections",
 };
@@ -217,6 +218,16 @@ const sanitizePayload = (resource: string, data: any) => {
 
     if (resource === "variants") {
         return sanitizeVariantPayload(data, { includeProductId: true });
+    }
+
+    if (resource === "shipments") {
+        const payload: Record<string, unknown> = {};
+        if (data.status !== undefined) payload.status = data.status;
+        if (data.courier !== undefined) payload.courier = data.courier;
+        if (data.trackingNumber !== undefined) {
+            payload.trackingNumber = data.trackingNumber;
+        }
+        return payload;
     }
 
     return data;

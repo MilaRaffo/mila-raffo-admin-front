@@ -16,7 +16,9 @@ import {
   TextField,
   TextInput,
 } from "@/components/admin";
-import { useRecordContext } from "ra-core";
+import { buttonVariants } from "@/components/ui/button";
+import { Link } from "react-router";
+import { useCreatePath, useRecordContext } from "ra-core";
 import { AccessDeniedCard } from "@/components/security/AccessDeniedCard";
 import { validators } from "@/lib/validators";
 import { CanAccess } from "@/security/access";
@@ -47,6 +49,54 @@ const OrderItemsPanel = () => {
       <DataTable.Col source="unitPrice" label="Precio unitario" />
       <DataTable.Col source="total" label="Total" />
     </DataTable>
+  );
+};
+
+const ShipmentLink = () => {
+  const record = useRecordContext<{
+    shipment?: {
+      id?: string;
+      status?: string;
+      courier?: string | null;
+      trackingNumber?: string | null;
+    } | null;
+  }>();
+  const createPath = useCreatePath();
+  const shipment = record?.shipment;
+
+  if (!shipment?.id) {
+    return (
+      <span className="text-sm text-muted-foreground">
+        Sin envío generado
+      </span>
+    );
+  }
+
+  return (
+    <div className="flex flex-col items-start gap-2">
+      <div className="text-sm">
+        <span>{shipment.status}</span>
+        {shipment.courier ? (
+          <span className="text-muted-foreground"> · {shipment.courier}</span>
+        ) : null}
+        {shipment.trackingNumber ? (
+          <span className="text-muted-foreground">
+            {" "}
+            · {shipment.trackingNumber}
+          </span>
+        ) : null}
+      </div>
+      <Link
+        className={buttonVariants({ variant: "outline" })}
+        to={createPath({
+          resource: "shipments",
+          type: "show",
+          id: shipment.id,
+        })}
+      >
+        Ver envío
+      </Link>
+    </div>
   );
 };
 
@@ -153,6 +203,10 @@ export const OrderShow = () => (
           <div>
             <div className="text-xs text-muted-foreground">Tracking</div>
             <TextField source="trackingNumber" />
+          </div>
+          <div>
+            <div className="text-xs text-muted-foreground">Envío</div>
+            <ShipmentLink />
           </div>
         </div>
       </div>

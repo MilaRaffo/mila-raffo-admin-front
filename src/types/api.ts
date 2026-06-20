@@ -244,6 +244,23 @@ export const PAYMENT_STATUS = {
 
 export type PaymentStatus = (typeof PAYMENT_STATUS)[keyof typeof PAYMENT_STATUS];
 
+export const SHIPMENT_STATUS = {
+  IN_PREPARATION: "En preparacion",
+  SHIPPED: "Enviado",
+  DELIVERED: "Entregado",
+} as const;
+
+export type ShipmentStatus = (typeof SHIPMENT_STATUS)[keyof typeof SHIPMENT_STATUS];
+
+export interface ShipmentSummary {
+  id: UUID;
+  status: ShipmentStatus;
+  courier?: string;
+  trackingNumber?: string;
+  shippedAt?: string;
+  deliveredAt?: string;
+}
+
 export interface UpdateOrderDto {
   status?: OrderStatus;
   trackingNumber?: string;
@@ -267,6 +284,7 @@ export interface Order {
   notes?: string;
   shippingAddress: AddressInfo;
   billingAddress: AddressInfo;
+  shipment?: ShipmentSummary | null;
   user: {
     id: UUID;
     name: string;
