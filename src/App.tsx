@@ -23,6 +23,7 @@ import { UserList, UserCreate, UserEdit, UserShow } from './users/users';
 import { SectionsList } from './sections/sections';
 import { SectionCreate } from './sections/createSection';
 import { SectionEdit } from './sections/editSection';
+import { NotificationCreate } from './notifications/NotificationCreate';
 
 export const App = () => {
     return(
@@ -42,6 +43,7 @@ export const App = () => {
             <Resource name='orders' options={{ label: 'Órdenes' }} list={OrderList} create={OrderCreate} edit={OrderEdit} show={OrderShow} recordRepresentation="orderNumber" />
             <Resource name='users' options={{ label: 'Usuarios' }} list={UserList} create={UserCreate} edit={UserEdit} show={UserShow} recordRepresentation="email" />
             <Resource name='sections' options={{ label: 'Secciones' }} list={SectionsList} create={SectionCreate} edit={SectionEdit} recordRepresentation="title" />
+            <Resource name='notifications' options={{ label: 'Notificaciones' }} list={NotificationCreate} />
         </Admin>
     )
 };
