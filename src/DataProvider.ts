@@ -190,7 +190,16 @@ const sanitizeVariantPayload = (data: VariantPayloadInput, options: { includePro
     return payload;
 };
 
-const sanitizePayload = (resource: string, data: any) => {
+const sanitizePayload = (resource: string, data: any, operation: "create" | "update" = "update") => {
+    if (resource === "users") {
+        const fields = ["name", "lastName", "email", "phone", "roleId"];
+        if (operation === "create") fields.push("password");
+        return Object.fromEntries(
+            fields.filter((field) => data[field] !== undefined)
+                .map((field) => [field, data[field]]),
+        );
+    }
+
     if (resource === "products") {
         const characteristics = Array.isArray(data.characteristics)
             ? data.characteristics
@@ -413,7 +422,7 @@ export const dataProvider: DataProvider = {
 
         const record = await apiRequest<RaRecord>(basePath, {
             method: "POST",
-            body: JSON.stringify(sanitizePayload(resource, params.data)),
+            body: JSON.stringify(sanitizePayload(resource, params.data, "create")),
         });
 
         return {
